@@ -10,10 +10,10 @@ function createImage(){
     for (let i = 0; i < imageData.data.length; i += 4) {
         // Modify pixel data
         imageData.data[i + 0] = 190;  // R value
-        imageData.data[i + 1] = 232;    // G value
+        imageData.data[i + 1] = 232;  // G value
         imageData.data[i + 2] = 123;  // B value
-        imageData.data[i + 3] = 255;  // A value
+        imageData.data[i + 3] = 255;  // A value -> Transparency
     }
-    ctx.putImageData(imageData,20,20)
+    ctx.putImageData(imageData,0,0)
 }
 createImage();

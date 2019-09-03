@@ -2,28 +2,33 @@ const WIDTH = 500;
 const HEIGHT = 500;
 
 function createImage(){
-    const canvas = document.getElementById('canvas');
-    const ctx = canvas.getContext('2d');
+    let canvas = document.getElementById('canvas');
+    let ctx = canvas.getContext('2d');
     canvas.height = HEIGHT
     canvas.width = WIDTH
-    var imageData = ctx.createImageData(WIDTH, HEIGHT);
-    for (i = 0; i < imageData.width; i++) {
-        for(j = 0; j < imageData.height; j++) {
+    var imageData = ctx.createImageData(canvas.width, canvas.height);
 
-            if(j< imageData.height) {
-                r = j / imageData.height * 255;
-                g = j / imageData.height * 255;
-                b = j / imageData.height * 255;
-            }
-            r= 255;
-            g= (1 - ((j - imageData.height / 2) / (imageData.height / 2))) * 255
-            b=0
-            setPixel(imageData, j, i, r, g, b, 255);
+    let half = imageData.width / 2;
+
+    for(let i=0;i<half;i++){
+        let color= (i / half) * 255;
+        console.log(color)
+        for(let j=0;j<imageData.height;j++){
+            setPixel(imageData,i,j,color,color,0, 255);
         }
     }
-    ctx.putImageData(imageData,0,0)
-}
 
+    for(let i=half;i<imageData.width;i++){
+        let color= (1 - (i-half) / half) * 255;
+        for(let j=0;j<imageData.height;j++){
+            setPixel(imageData,i,j,255,color,0, 255);
+        }
+    }
+
+    ctx.putImageData(imageData,0,0);
+    console.log("Finished excecution");
+    
+}
 function setPixel(imageData, i, j, r, g, b, a){
     index = (i+j * imageData.width) * 4;
     imageData.data[index+0] = r

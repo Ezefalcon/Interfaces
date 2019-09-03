@@ -51,9 +51,15 @@ function findAverageValuesInRow(mat){
     return results;
 }
 
+
 let mat=[[]];
-console.log(mat)
-fillMatrix(mat,10);
-console.log(findMaxValue(mat))
-console.log(findMaxPairValueAndMinImpairValue(mat))
-console.log(findAverageValuesInRow(mat))
+fillMatrix(mat,1000);
+let maxAndMin = findMaxPairValueAndMinImpairValue(mat)
+document.getElementById("a").innerHTML = "a) Escribir una función que retorne el valor máximo de toda la matriz: " + findMaxValue(mat);
+
+document.getElementById("b").innerHTML = "b) Escribir una función que retorne el valor máximo contenido en "
+                                        + "las filas pares y el valor mínimo en las filas impares: ";
+document.getElementById("Pares").innerHTML = "Pares= "+ maxAndMin[0];
+document.getElementById("Impares").innerHTML = "Impares= "+ maxAndMin[1];
+
+document.getElementById("c").innerHTML = "Calcular el valor promedio de cada fila y guardarlos en un arreglo: "+ findAverageValuesInRow(mat)
