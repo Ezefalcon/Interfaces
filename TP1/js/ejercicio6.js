@@ -1,8 +1,7 @@
 
 
 var image = new Image();
-image.crossOrigin = "Anonymous";
-image.src = "image.jpg";
+image.src = "./img/image.jpg";
 
 image.onload = function() {
   drawThatImage(this)
@@ -42,7 +41,7 @@ function toGrayScale() {
      console.log("Finished execution");
 }
 
-function setPixel(imageData, i, j, r, g, b, a){
+function setPixel(imageData, i, j, r, g, b, a) {
   index = (i+j * imageData.width) * 4;
   imageData.data[index+0] = r
   imageData.data[index+1] = g
