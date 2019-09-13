@@ -36,7 +36,7 @@ if(canvas4!=null){
         drawLineToLastCircle(canvas4, circle);
     });
 }
-//AddEventListener for exercise 4
+//AddEventListener for exercise 5
 var canvas5 = document.getElementById('canvas5');
 var getCenterButton = document.getElementById('getCenter');
 if(canvas5!=null){
@@ -53,7 +53,23 @@ if(canvas5!=null){
         makeCircle(new Circle(center[0],center[1], 7, "#1cc805"), canvas5);
     });
 }
-
+//AddEventListener for exercise 6
+var canvas6 = document.getElementById('canvas6');
+var getCenterButton = document.getElementById('getCenter');
+if(canvas5!=null){
+    var circle;
+    closeButton.addEventListener("click", function(e) {
+        joinWithCircle(canvas6, circle, circlesList[0].posX, circlesList[0].posY);
+    });
+    canvas6.addEventListener("click", function(e) {
+        circle = createCircleOnClick(e, this);
+        drawLineToLastCircle(canvas6, circle);
+    });
+    getCenterButton.addEventListener("click", function (e) {
+        let center = getCenter();
+        makeCircle(new Circle(center[0],center[1], 7, "#1cc805"), canvas5);
+    });
+}
 
 // Ejercicio 1
 function getPosYAndXFromCanvas(e, canvas) {
@@ -118,4 +134,13 @@ function Circle(posX, posY, radio, color) {
     this.posY = posY;
     this.radio = radio;
     this.color = color;
+}
+
+
+function onMouseMove(event) {
+    let x = event.clientX;
+    let y = event.clientY;
+    for (circle in circlesList) {
+        makeCircle()
+    }
 }
