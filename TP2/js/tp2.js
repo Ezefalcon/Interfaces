@@ -1,5 +1,13 @@
-// Array of circles
-var circlesList = [];
+"use strict";
+
+import { Circle } from "./Circle.js";
+import { Polygon } from "./Polygon.js";
+
+// List of polygons
+var polygonsList = [];
+// Current polygon
+var polygon = new Polygon();
+
 // AddEventListener for exercise 1
 var canvas1 = document.getElementById('canvas1');
 if(canvas1!=null) {
@@ -8,67 +16,41 @@ if(canvas1!=null) {
         getPosYAndXFromCanvas(e, this);
     });
 }
-//AddEventListener for exercise 2
-var canvas2 = document.getElementById('canvas2');
-if(canvas2!=null){
-    canvas2.addEventListener("click", function(e) {
-        createCircleOnClick(e, this);
-    });
-}
-//AddEventListener for exercise 3
-var canvas3 = document.getElementById('canvas3');
-if(canvas3!=null){
-    canvas3.addEventListener("click", function(e) {
-        let circle = createCircleOnClick(e, this);
-        drawLineToLastCircle(canvas3, circle);
-    });
-}
-//AddEventListener for exercise 4
-var canvas4 = document.getElementById('canvas4');
-var closeButton = document.getElementById('closeButton');
-if(canvas4!=null){
-    var circle;
-    closeButton.addEventListener("click", function(e) {
-        joinWithCircle(canvas4, circle, circlesList[0].posX, circlesList[0].posY);
-    });
-    canvas4.addEventListener("click", function(e) {
-        circle = createCircleOnClick(e, this);
-        drawLineToLastCircle(canvas4, circle);
-    });
-}
-//AddEventListener for exercise 5
-var canvas5 = document.getElementById('canvas5');
-var getCenterButton = document.getElementById('getCenter');
-if(canvas5!=null){
-    var circle;
-    closeButton.addEventListener("click", function(e) {
-        joinWithCircle(canvas5, circle, circlesList[0].posX, circlesList[0].posY);
-    });
-    canvas5.addEventListener("click", function(e) {
-        circle = createCircleOnClick(e, this);
-        drawLineToLastCircle(canvas5, circle);
-    });
-    getCenterButton.addEventListener("click", function (e) {
-        let center = getCenter();
-        makeCircle(new Circle(center[0],center[1], 7, "#1cc805"), canvas5);
-    });
-}
 //AddEventListener for exercise 6
 var canvas6 = document.getElementById('canvas6');
-var getCenterButton = document.getElementById('getCenter');
-if(canvas5!=null){
-    var circle;
+var closeButton = document.getElementById('closeButton');
+if(canvas6!=null) {
+    let isClosed=false;
+    let circle;
     closeButton.addEventListener("click", function(e) {
-        joinWithCircle(canvas6, circle, circlesList[0].posX, circlesList[0].posY);
+        if (!isClosed) {
+            closeAndMakeCircle(circle);
+            closeButton.innerText = "Crear nuevo poligono";
+            isClosed = true;
+        } else {
+            closeButton.innerText = "Cierre el poligono";
+            polygon = new Polygon();
+            isClosed = false;
+        }
     });
     canvas6.addEventListener("click", function(e) {
-        circle = createCircleOnClick(e, this);
-        drawLineToLastCircle(canvas6, circle);
+        let onMove = document.getElementById('onMove').checked;
+        if (!onMove) {
+            circle = new Circle(e.layerX, e.layerY, 20, "#c82124", canvas6);
+            circle.makeCircleOnCanvas();
+            polygon.addCircle(circle);
+            polygon.drawLineToLastCircle(canvas6, circle);
+        }
     });
-    getCenterButton.addEventListener("click", function (e) {
-        let center = getCenter();
-        makeCircle(new Circle(center[0],center[1], 7, "#1cc805"), canvas5);
-    });
+}
+
+function closeAndMakeCircle() {
+    polygon.closePolygon(canvas6);
+    let center = polygon.getCenter();
+    let circle = new Circle(center[0],center[1], 7, "#1cc805", canvas6);
+    circle.makeCircleOnCanvas();
+    polygon.setCenter(circle);
+    polygonsList.push(polygon);
 }
 
 // Ejercicio 1
@@ -86,61 +68,46 @@ function createSquare(canvas) {
     ctx.fillRect(0, 0, 500, 500);
 }
 
-function createCircleOnClick(e, canvas2) {
-    let circle = new Circle(e.layerX, e.layerY, 20, "#c82124")
-    makeCircle(circle, canvas2);
-    circlesList.push(circle);
-    return circle;
-}
-
-function makeCircle(circle,canvas) {
-    let ctx = canvas.getContext('2d');
-    ctx.fillStyle = circle.color;
-    ctx.beginPath();
-    ctx.arc(circle.posX,circle.posY, circle.radio, 0, 2 * Math.PI);
-    ctx.closePath();
-    ctx.fill();
-}
-
-function drawLineToLastCircle(canvas3, circle) {
-    if(circlesList[1]!=null) {
-        joinWithCircle(canvas3, circle, circlesList[circlesList.length-2].posX,
-            circlesList[circlesList.length-2].posY);
+addEventListener('DOMContentLoaded', () => {
+    var selectedPolygon, selectedCircle;
+    canvas6.onmousedown = e => {
+        for(let poly of polygonsList) {
+            if(poly.center!=null) {
+                if(poly.center.isClicked(e.layerX, e.layerY)) {
+                    selectedPolygon = poly;
+                    break;
+                }
+            }
+        }
+        for(let poly of polygonsList) {
+            for (let circle of poly.circlesList) {
+                if (circle.isClicked(e.layerX, e.layerY)) {
+                    selectedCircle = circle;
+                    break;
+                }
+            }
+        }
     }
-}
-
-function joinWithCircle(canvas, circle, lineToPosX, lineToPosY) {
-    let ctx = canvas.getContext('2d');
-    ctx.beginPath();
-    ctx.moveTo(circle.posX,circle.posY);
-    ctx.lineTo(lineToPosX, lineToPosY);
-    ctx.strokeStyle = "#c8c334";
-    ctx.stroke();
-    ctx.closePath();
-}
-
-function getCenter() {
-    let sumX=0;
-    let sumY=0;
-    circlesList.forEach((x) => {
-        sumX+=x.posX;
-        sumY+=x.posY;
-    });
-    return [sumX/circlesList.length, sumY/circlesList.length];
-}
-
-function Circle(posX, posY, radio, color) {
-    this.posX = posX;
-    this.posY = posY;
-    this.radio = radio;
-    this.color = color;
-}
-
-
-function onMouseMove(event) {
-    let x = event.clientX;
-    let y = event.clientY;
-    for (circle in circlesList) {
-        makeCircle()
+    canvas6.onmousemove = event => {
+        if(selectedCircle!=null) {
+            selectedCircle.move(event.layerX, event.layerY);
+            drawEmAgain();
+        }
     }
+
+    canvas6.onmouseup = event => {
+        selectedCircle = null;
+        selectedPolygon = null;
+    }
+});
+
+function drawEmAgain() {
+    var ctx = canvas6.getContext('2d');
+    ctx.clearRect(0,0, canvas6.width, canvas6.height)
+    for (let poly of polygonsList) {
+        poly.makePolygons();
+    }
+    closeAndMakeCircle();
 }
+
+
